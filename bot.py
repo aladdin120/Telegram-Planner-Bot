@@ -8,6 +8,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 import keyboards as kb
 import config
 from access import AccessMiddleware
+import data
 
 # Берем данные пользователя и бота из config.py
 API_TOKEN = config.TOKEN
@@ -20,6 +21,7 @@ bot = Bot(token=API_TOKEN, parse_mode=types.ParseMode.HTML)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 dp.middleware.setup(AccessMiddleware(ACCESS_ID))
+
 
 # Машина состояний
 class States(StatesGroup):
@@ -49,6 +51,7 @@ async def help_command(message: types.Message, state: FSMContext):
     Вызываем хендлер для обработки статуса принятия названия и даты напоминания
     """
     await state.update_data(date=message.text.lower())
+    data.parse_message(message.text.lower())
     await state.finish()
     await message.reply("Ваше напоминание принято")
 
